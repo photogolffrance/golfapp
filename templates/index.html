@@ -1,22 +1,46 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <title>GolfApp - Sélection Équipe</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <meta charset="utf-8" />
+  <title>Golf — Sélection équipe</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <h1>🏌️ Sélection d’équipe</h1>
+  <header>
+    <h1>🏌️ Sélection équipe — Coupe</h1>
+  </header>
 
-  <div class="actions">
-    <button id="btn-ajouter">➕ Ajouter un joueur</button>
-    <button id="btn-sauvegarder">💾 Sauvegarder</button>
-    <button id="btn-reset">♻️ Remettre toutes les dispos à zéro</button>
-    <button id="btn-calculer">🏆 Choisir la meilleure équipe</button>
-  </div>
+  <main>
+    <section class="controls">
+      <button id="btn-add">➕ Ajouter</button>
+      <button id="btn-save">💾 Sauvegarder</button>
+      <button id="btn-reset">♻️ Remettre dispos à NON</button>
+      <button id="btn-calc">🏆 Choisir la meilleure équipe</button>
+      <button id="btn-copy" title="Copier le résultat">📋 Copier le résultat</button>
+    </section>
 
-  <div id="tableau"></div>
-  <div id="resultat" style="margin-top: 40px;"></div>
+    <section id="result" class="result" style="display:none"></section>
+
+    <section id="table-section">
+      <table id="players-table">
+        <thead>
+          <tr>
+            <th data-col="nom">Nom ⤍</th>
+            <th data-col="index">Index ⤍</th>
+            <th>Disponible</th>
+            <th>Choix capitaine</th>
+            <th>Suppr</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section class="footer-actions">
+      
+      <span id="status" class="status"></span>
+    </section>
+  </main>
 
   <script src="{{ url_for('static', filename='main.js') }}"></script>
 </body>
