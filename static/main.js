@@ -131,7 +131,7 @@ btnCalc.addEventListener("click", async ()=>{
     }
     const data = await resp.json();
     // build display
-    let html = `<h2>🏌️ Sélection (index officiel : ${data.index_officiel})</h2>`;
+    let html = `<h2>🏌️ Sélection pour le prochain match (index officiel : ${data.index_officiel})</h2>`;
     html += `<p>Index réel : ${data.index_reel}</p>`;
     html += `<ul>`;
     data.team.forEach(p=>{
@@ -169,3 +169,4 @@ document.querySelectorAll("th[data-col]").forEach(th=>{
 
 // initial load
 loadPlayers();
+
