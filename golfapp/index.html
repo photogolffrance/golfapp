@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestion équipe Golf</title>
+    <script src="main.js" defer></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #006400; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f4f4f4; cursor: pointer; }
+        button { margin-top: 15px; padding: 10px 15px; cursor: pointer; }
+        #resultat { margin-top: 30px; background: #f9f9f9; padding: 15px; border-radius: 10px; }
+        #resetBtn { background-color: #cc0000; color: white; }
+        #calculBtn { background-color: #006400; color: white; }
+    </style>
+</head>
+<body>
+
+<h1>🏌️ Gestion de l'équipe de golf</h1>
+
+<div id="resultat"></div>
+
+<table id="tableJoueurs">
+    <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Index</th>
+            <th>Disponible</th>
+            <th>Choix capitaine</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<button id="saveBtn">💾 Sauvegarder les disponibilités</button>
+<button id="calculBtn">⚡ Calculer la meilleure équipe</button>
+<button id="resetBtn">🔁 Remettre toutes les dispos à NON</button>
+
+</body>
+</html>
