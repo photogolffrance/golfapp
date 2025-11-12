@@ -1,68 +1,104 @@
-const API_URL = "http://127.0.0.1:5000";
-const tableBody = document.querySelector("#tableJoueurs tbody");
-const resultatDiv = document.getElementById("resultat");
-const calculBtn = document.getElementById("calculBtn");
-const saveBtn = document.getElementById("saveBtn");
-const resetBtn = document.getElementById("resetBtn");
+const apiBase = "/api";
 
 async function chargerJoueurs() {
-    const res = await fetch(`${API_URL}/joueurs`);
-    const joueurs = await res.json();
-    tableBody.innerHTML = "";
-    joueurs.forEach((j, i) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-            <td>${j.nom}</td>
-            <td>${j.index}</td>
-            <td><input type="checkbox" ${j.disponible ? "checked" : ""}></td>
-            <td><input type="checkbox" ${j.choix_capitaine ? "checked" : ""}></td>
-        `;
-        tableBody.appendChild(tr);
-    });
+  const res = await fetch(`${apiBase}/joueurs`);
+  const data = await res.json();
+  afficherTableau(data);
 }
 
-async function sauvegarderDispos() {
-    const lignes = tableBody.querySelectorAll("tr");
-    const dispos = Array.from(lignes).map(l => l.children[2].firstChild.checked);
-    await fetch(`${API_URL}/update_disponibilite`, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(dispos)
+async function sauvegarder() {
+  const lignes = document.querySelectorAll("#tableau tbody tr");
+  const joueurs = [];
+  lignes.forEach((tr) => {
+    joueurs.push({
+      nom: tr.querySelector(".nom").textContent,
+      index: parseFloat(tr.querySelector(".index").textContent),
+      disponible: tr.querySelector(".dispo").checked,
+      choix_capitaine: tr.querySelector(".capitaine").checked,
     });
-    alert("Disponibilités sauvegardées !");
-}
-
-async function calculerEquipe() {
-    resultatDiv.innerHTML = "<em>Calcul en cours...</em>";
-    calculBtn.disabled = true;
-
-    const res = await fetch(`${API_URL}/calculer_meilleure_equipe`, {method: "POST"});
-    calculBtn.disabled = false;
-
-    if (!res.ok) {
-        const err = await res.json();
-        resultatDiv.innerHTML = `<strong>❌ ${err.error}</strong>`;
-        return;
-    }
-
-    const data = await res.json();
-    let html = `<h3>🏆 Meilleure équipe (Index global : ${data.index_global})</h3><ul>`;
-    data.equipe.forEach(j => html += `<li>${j.nom} – Index ${j.index}</li>`);
-    html += "</ul>";
-
-    resultatDiv.innerHTML = html;
-    resultatDiv.scrollIntoView({behavior: "smooth"});
+  });
+  await fetch(`${apiBase}/sauvegarder`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(joueurs),
+  });
+  alert("✅ Sauvegarde effectuée !");
 }
 
 async function resetDispos() {
-    if (!confirm("Remettre toutes les disponibilités à NON ?")) return;
-    await fetch(`${API_URL}/reset_dispos`, {method: "POST"});
-    chargerJoueurs();
-    alert("Toutes les disponibilités ont été remises à zéro !");
+  await fetch(`${apiBase}/reset_dispos`, { method: "POST" });
+  alert("Toutes les disponibilités ont été remises à zéro !");
+  chargerJoueurs();
 }
 
-saveBtn.addEventListener("click", sauvegarderDispos);
-calculBtn.addEventListener("click", calculerEquipe);
-resetBtn.addEventListener("click", resetDispos);
+function afficherTableau(joueurs) {
+  const container = document.getElementById("tableau");
+  let html = `<table><thead><tr>
+      <th>Nom</th>
+      <th>Index</th>
+      <th>Disponible</th>
+      <th>Choix capitaine</th>
+      <th>Supprimer</th>
+    </tr></thead><tbody>`;
+
+  joueurs.forEach((j, i) => {
+    html += `<tr>
+      <td class="nom">${j.nom}</td>
+      <td class="index">${j.index}</td>
+      <td><input type="checkbox" class="dispo" ${j.disponible ? "checked" : ""}></td>
+      <td><input type="checkbox" class="capitaine" ${j.choix_capitaine ? "checked" : ""}></td>
+      <td><button onclick="supprimerJoueur(${i})">🗑️</button></td>
+    </tr>`;
+  });
+  html += `</tbody></table>`;
+  container.innerHTML = html;
+}
+
+async function supprimerJoueur(i) {
+  await fetch(`${apiBase}/joueurs/${i}`, { method: "DELETE" });
+  chargerJoueurs();
+}
+
+async function ajouterJoueur() {
+  const nom = prompt("Nom du joueur ?");
+  const index = parseFloat(prompt("Index du joueur ?"));
+  if (!nom || isNaN(index)) return alert("Entrée invalide !");
+  await fetch(`${apiBase}/joueurs`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ nom, index, disponible: false, choix_capitaine: false }),
+  });
+  chargerJoueurs();
+}
+
+async function calculerEquipe() {
+  const res = await fetch(`${apiBase}/meilleure_equipe`, { method: "POST" });
+  const data = await res.json();
+
+  const div = document.getElementById("resultat");
+  if (data.error) {
+    div.innerHTML = `<p style="color:red">${data.error}</p>`;
+    div.scrollIntoView({ behavior: "smooth" });
+    return;
+  }
+
+  let html = `<h2>🏌️ Sélection des 9 joueurs :</h2><ul>`;
+  data.joueurs.forEach((j) => {
+    const plaf = j.plafonne ? " *" : "";
+    html += `<li>${j.nom} – Index ${j.index}${plaf}</li>`;
+  });
+  html += `</ul>`;
+  html += `<p><strong>Index global réel :</strong> ${data.index_reel}<br>
+           <strong>Index global officiel :</strong> ${data.index_officiel}</p>`;
+  html += `<p>${data.message}</p>`;
+
+  div.innerHTML = html;
+  div.scrollIntoView({ behavior: "smooth" });
+}
+
+document.getElementById("btn-ajouter").addEventListener("click", ajouterJoueur);
+document.getElementById("btn-sauvegarder").addEventListener("click", sauvegarder);
+document.getElementById("btn-reset").addEventListener("click", resetDispos);
+document.getElementById("btn-calculer").addEventListener("click", calculerEquipe);
 
 chargerJoueurs();
