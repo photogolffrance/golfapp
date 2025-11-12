@@ -20,14 +20,14 @@ h1, h2 {
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   background-color: white;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 th, td {
   border: 1px solid #ddd;
-  padding: 6px 4px;
+  padding: 8px 6px;
   text-align: center;
   white-space: nowrap;
 }
@@ -47,26 +47,49 @@ tr:nth-child(even) {
   overflow-x: auto;
 }
 
+/* --- MODE MOBILE --- */
 @media screen and (max-width: 600px) {
   body {
     padding: 0.5rem;
   }
+
+  /* ✅ Texte plus grand sur mobile */
   table {
-    font-size: 0.75rem;
+    font-size: 1.2rem; /* environ +50% */
   }
+
   th, td {
-    padding: 4px 2px;
+    padding: 8px 4px;
   }
-  button, select, input {
-    font-size: 0.8rem;
-    padding: 6px;
-  }
+
+  /* ✅ Titres plus visibles */
   h1 {
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
+  }
+
+  h2 {
     font-size: 1.2rem;
   }
+
+  /* ✅ Boutons plus lisibles */
+  button {
+    font-size: 1.1rem;
+    padding: 12px 18px;
+    border-radius: 10px;
+    display: block;
+    width: 100%;
+    margin: 6px 0;
+  }
+
+  /* ✅ Largeurs plus équilibrées */
+  th:nth-child(1), td:nth-child(1) { width: 130px; }  /* Nom */
+  th:nth-child(2), td:nth-child(2) { width: 80px; }   /* Index */
+  th:nth-child(3), td:nth-child(3) { width: 80px; }  /* Capitaine */
+  th:nth-child(4), td:nth-child(4) { width: 80px; }  /* Dispo */
 }
 
-/* BOUTONS */
+/* BOUTONS (version desktop) */
 button {
   background-color: #005b8f;
   color: white;
@@ -92,14 +115,6 @@ button:hover {
 }
 
 #resultat pre {
-  font-size: 0.9rem;
+  font-size: 1rem;
   white-space: pre-wrap;
-}
-
-/* ZONE FIXE SUR MOBILE */
-@media (max-width: 480px) {
-  th:nth-child(1), td:nth-child(1) { width: 80px; }   /* Nom */
-  th:nth-child(2), td:nth-child(2) { width: 50px; }   /* Index */
-  th:nth-child(3), td:nth-child(3) { width: 80px; }   /* Capitaine */
-  th:nth-child(4), td:nth-child(4) { width: 90px; }   /* Dispo */
 }
