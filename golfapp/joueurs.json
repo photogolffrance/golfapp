@@ -1,0 +1,470 @@
+[
+    {
+        "nom": "Adrien BOUTRELLE",
+        "index": 18.2,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Andrew HALL",
+        "index": 14.5,
+        "disponible": true,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Anton COSTALS",
+        "index": 13.5,
+        "disponible": true,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Arnaud GILBERT",
+        "index": 18.5,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Arthur GUEHO",
+        "index": 2.4,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Benoît BECRET",
+        "index": 15.5,
+        "disponible": true,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Bernard ALLIAS",
+        "index": 17.7,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Bertrand VUAROQUEAUX",
+        "index": 16.4,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Bruno CALMET",
+        "index": 18.2,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Bruno HIERNARD",
+        "index": 17.6,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Christophe BAUDAT",
+        "index": 15.0,
+        "disponible": true,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Christophe JAMMOT",
+        "index": 7.5,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Christophe REMY",
+        "index": 8.7,
+        "disponible": true,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Claude DEJOIE",
+        "index": 19.5,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Daniel URBANIAK",
+        "index": 10.3,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Didier COTTINEAU",
+        "index": 14.0,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Dominique PIN",
+        "index": 16.6,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Dominique VIVIEN",
+        "index": 18.9,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Edouard PAINVIN",
+        "index": 14.8,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Emmanuel JANODET",
+        "index": 8.1,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Ennio COZZARIN",
+        "index": 17.0,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Eric DELACOUR",
+        "index": 17.6,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Fabrice GIRARD",
+        "index": 19.8,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Fabrice JACQUIER",
+        "index": 17.0,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "France OLIVEIRA",
+        "index": 1.9,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Franck SEGUIN",
+        "index": 15.6,
+        "disponible": true,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Geoffroy TRIART",
+        "index": 6.8,
+        "disponible": true,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Grégoire TONNEL",
+        "index": 8.2,
+        "disponible": true,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Gérard REMY",
+        "index": 12.4,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Gérard RIQUET",
+        "index": 16.1,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Hervé MONTAGNE",
+        "index": 3.7,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Hervé PIERRE",
+        "index": 9.9,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Hommad MOUS",
+        "index": 16.2,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Hubert GOUBET",
+        "index": 15.1,
+        "disponible": true,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Jean-François CAPELLE",
+        "index": 18.2,
+        "disponible": true,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Jean-Louis RICORDEAU",
+        "index": 12.4,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Jean-Luc FOUREST",
+        "index": 17.1,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Jean-Philippe SEURET",
+        "index": 14.4,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Jerome FERTE",
+        "index": 18.2,
+        "disponible": true,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Julien BIANCHINI",
+        "index": 12.7,
+        "disponible": true,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Julien VAGNIEZ",
+        "index": 9.6,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Jérôme BOTT",
+        "index": 1.6,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Jérôme HARANT",
+        "index": 20.0,
+        "disponible": true,
+        "choix_capitaine": true
+    },
+    {
+        "nom": "Kristopher RIQUET",
+        "index": 14.9,
+        "disponible": true,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Laurent BOCQUET",
+        "index": 12.8,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Louis GOBRON",
+        "index": 15.1,
+        "disponible": true,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Luc HINCELIN",
+        "index": 18.7,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Léo PETIT",
+        "index": 16.3,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Marc ERRASTI",
+        "index": 19.0,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Mario DI MASCIO",
+        "index": 17.8,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Michel POITEVIN",
+        "index": 18.8,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Michel REGNIER",
+        "index": 8.4,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Pascal BARRE",
+        "index": 19.7,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Pascal LABRE",
+        "index": 17.6,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Paul Henri DUCLAUX",
+        "index": 16.4,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Paul MORTIER",
+        "index": 9.6,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Philippe LEROY",
+        "index": 10.0,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Philippe MANABLE",
+        "index": 16.5,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Philippe RICORDEAU",
+        "index": 12.0,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Philippe WILLAUME",
+        "index": 16.0,
+        "disponible": true,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Rodolphe TONNEL",
+        "index": 6.0,
+        "disponible": true,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Romain TAUPIN",
+        "index": 0.7,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Romain TROUILLET",
+        "index": 9.8,
+        "disponible": true,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Simon GAULT",
+        "index": 2.1,
+        "disponible": true,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Sébastien COLOMBERO",
+        "index": 16.0,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Sébastien LEFEVRE",
+        "index": 19.2,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Sébastien PASQUER",
+        "index": 19.8,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Tai Chun CHANG",
+        "index": 13.8,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Thibault FOUREST",
+        "index": -2.3,
+        "disponible": true,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Thierry PETIT",
+        "index": 9.8,
+        "disponible": true,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Thomas KONTOMICHOS",
+        "index": 18.0,
+        "disponible": true,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Tom AUBERT",
+        "index": 19.2,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Vincent KACZOREK",
+        "index": 17.9,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Vincent PODEVIN-BAUDUIN",
+        "index": 18.9,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Virgile AUBERT",
+        "index": 17.2,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Yann CANIT",
+        "index": 11.0,
+        "disponible": false,
+        "choix_capitaine": false
+    },
+    {
+        "nom": "Yohann PETIT",
+        "index": 11.2,
+        "disponible": true,
+        "choix_capitaine": true
+    },
+    {
+        "nom": "Yves ANCELIN",
+        "index": 15.5,
+        "disponible": true,
+        "choix_capitaine": false
+    }
+]
