@@ -1,17 +1,13 @@
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
-import json
-import itertools
-import math
-import os
-import subprocess
+import json, itertools, math, os, subprocess
 
 app = Flask(__name__)
 CORS(app)
 
 DATA_FILE = "joueurs.json"
 
-# === Chargement des joueurs ===
+# === Helpers JSON ===
 def load_joueurs():
     try:
         with open(DATA_FILE, "r", encoding="utf-8") as f:
@@ -19,35 +15,30 @@ def load_joueurs():
     except FileNotFoundError:
         return []
 
-# === Sauvegarde locale ===
 def save_joueurs(joueurs):
     with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(joueurs, f, ensure_ascii=False, indent=2)
 
-# === Sauvegarde sur GitHub ===
-def push_to_github(message="Mise à jour automatique des joueurs"):
+# === GitHub sync ===
+def push_to_github(message="Mise à jour automatique"):
     token = os.getenv("GITHUB_TOKEN")
     repo = os.getenv("GITHUB_REPO")
 
     if not token or not repo:
-        print("⚠️ GITHUB_TOKEN ou GITHUB_REPO manquant - commit ignoré.")
+        print("⚠️ GITHUB_TOKEN ou GITHUB_REPO manquant.")
         return
 
     try:
-        print("🔄 Commit et push vers GitHub...")
-
         subprocess.run(["git", "config", "--global", "user.email", "render@app.com"], check=True)
         subprocess.run(["git", "config", "--global", "user.name", "Render Auto Commit"], check=True)
-
         subprocess.run(["git", "add", DATA_FILE], check=True)
         subprocess.run(["git", "commit", "-m", message], check=False)
         subprocess.run(["git", "push", f"https://{token}@github.com/{repo}.git"], check=True)
-
-        print("✅ Fichier joueurs.json synchronisé avec GitHub.")
+        print("✅ Push GitHub OK")
     except Exception as e:
-        print("❌ Erreur lors du push GitHub :", e)
+        print("❌ Erreur push GitHub :", e)
 
-# === Route principale ===
+# === Routes API ===
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -58,43 +49,28 @@ def get_joueurs():
 
 @app.route("/api/joueurs", methods=["POST"])
 def add_joueur():
-    data = request.get_json()
-
-    # ✅ Accepte un joueur ou une liste de joueurs
-    if isinstance(data, list):
-        joueurs_a_ajouter = data
-    else:
-        joueurs_a_ajouter = [data]
-
+    """Ajoute un joueur individuel"""
+    new_joueur = request.get_json()
     joueurs = load_joueurs()
-    joueurs.extend(joueurs_a_ajouter)
+
+    # anti-doublon
+    if any(j["nom"].strip().lower() == new_joueur["nom"].strip().lower() for j in joueurs):
+        return jsonify({"error": "Ce joueur existe déjà"}), 400
+
+    joueurs.append(new_joueur)
     save_joueurs(joueurs)
-
-    noms = [j.get("nom", "un joueur") for j in joueurs_a_ajouter]
-    push_to_github(f"Ajout de {', '.join(noms)}")
-
+    push_to_github(f"Ajout de {new_joueur.get('nom', 'un joueur')}")
     return jsonify(joueurs)
 
-
-
-@app.route("/api/joueurs/<nom>", methods=["PUT"])
-def update_joueur(nom):
-    joueurs = load_joueurs()
-    updated = request.json
-    for j in joueurs:
-        if j["nom"] == nom:
-            j.update(updated)
-    save_joueurs(joueurs)
-    push_to_github(f"Mise à jour de {nom}")
-    return jsonify({"success": True})
-
-@app.route("/api/joueurs/<nom>", methods=["DELETE"])
-def delete_joueur(nom):
-    joueurs = load_joueurs()
-    joueurs = [j for j in joueurs if j["nom"] != nom]
-    save_joueurs(joueurs)
-    push_to_github(f"Suppression de {nom}")
-    return jsonify({"success": True})
+@app.route("/api/joueurs", methods=["PUT"])
+def replace_joueurs():
+    """Remplace toute la liste"""
+    data = request.get_json()
+    if not isinstance(data, list):
+        return jsonify({"error": "Format invalide"}), 400
+    save_joueurs(data)
+    push_to_github("Sauvegarde complète de la liste")
+    return jsonify(data)
 
 @app.route("/api/reset_dispos", methods=["POST"])
 def reset_dispos():
@@ -107,42 +83,35 @@ def reset_dispos():
 
 @app.route("/api/meilleure_equipe", methods=["POST"])
 def meilleure_equipe():
-    data = request.get_json()
     joueurs = load_joueurs()
     dispo = [j for j in joueurs if j.get("disponible")]
 
     if len(dispo) < 9:
-        return jsonify({"error": "moins de 9 joueurs disponibles"}), 400
+        return jsonify({"error": "Moins de 9 joueurs disponibles"}), 400
 
-    capitaine = next((j for j in joueurs if j.get("capitaine")), None)
     index_cible = 84.4
     meilleure_diff = math.inf
     meilleure_combinaison = None
 
     for combinaison in itertools.combinations(dispo, 9):
-        total_index = 0
-        for j in combinaison:
-            idx = min(float(j["index"]), 18.4)
-            total_index += idx
+        total_index = sum(min(float(j["index"]), 18.4) for j in combinaison)
         diff = abs(total_index - index_cible)
         if diff < meilleure_diff:
             meilleure_diff = diff
             meilleure_combinaison = combinaison
 
     if not meilleure_combinaison:
-        return jsonify({"error": "aucune combinaison trouvée"}), 400
+        return jsonify({"error": "Aucune combinaison trouvée"}), 400
 
     equipe = sorted(meilleure_combinaison, key=lambda j: float(j["index"]))
     total_reel = sum(float(j["index"]) for j in equipe)
     total_plaf = sum(min(float(j["index"]), 18.4) for j in equipe)
 
-    result = {
+    return jsonify({
         "equipe": equipe,
         "total_index_reel": round(total_reel, 1),
         "total_index_plafonne": round(total_plaf, 1)
-    }
-
-    return jsonify(result)
+    })
 
 @app.route("/api/status")
 def status():
@@ -150,5 +119,3 @@ def status():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
-
-
