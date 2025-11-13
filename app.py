@@ -86,32 +86,87 @@ def meilleure_equipe():
     joueurs = load_joueurs()
     dispo = [j for j in joueurs if j.get("disponible")]
 
-    if len(dispo) < 9:
+    SEUIL = 84.4
+    PLAFOND = 18.4
+    NB = 9
+
+    if len(dispo) < NB:
         return jsonify({"error": "Moins de 9 joueurs disponibles"}), 400
 
-    index_cible = 84.4
-    meilleure_diff = math.inf
-    meilleure_combinaison = None
+    # forced = choix du capitaine (tous ceux cochés)
+    forced = [j for j in dispo if j.get("choix_capitaine")]
+    if len(forced) > NB:
+        return jsonify({"error": "Trop de choix du capitaine (>9)"}), 400
 
-    for combinaison in itertools.combinations(dispo, 9):
-        total_index = sum(min(float(j["index"]), 18.4) for j in combinaison)
-        diff = abs(total_index - index_cible)
-        if diff < meilleure_diff:
-            meilleure_diff = diff
-            meilleure_combinaison = combinaison
+    pool = [j for j in dispo if j not in forced]
+    need = NB - len(forced)
 
-    if not meilleure_combinaison:
-        return jsonify({"error": "Aucune combinaison trouvée"}), 400
+    import itertools, math
 
-    equipe = sorted(meilleure_combinaison, key=lambda j: float(j["index"]))
-    total_reel = sum(float(j["index"]) for j in equipe)
-    total_plaf = sum(min(float(j["index"]), 18.4) for j in equipe)
+    def official_total(team):
+        # calcule total officiel (plafonnement jusqu'à 2 joueurs > PLAFOND)
+        real = [float(j["index"]) for j in team]
+        real_sorted_desc = sorted(real, reverse=True)
+        cap_count = 0
+        official = 0.0
+        for v in real_sorted_desc:
+            if v > PLAFOND and cap_count < 2:
+                official += PLAFOND
+                cap_count += 1
+            else:
+                official += v
+        return round(official, 2), round(sum(real), 2)
 
-    return jsonify({
-        "equipe": equipe,
-        "total_index_reel": round(total_reel, 1),
-        "total_index_plafonne": round(total_plaf, 1)
-    })
+    meilleure = None
+    meilleur_ecart = None
+    meilleur_any = None  # meilleure même si en dessous du seuil (max officiel)
+
+    # générer combinaisons selon besoin
+    if need == 0:
+        candidats = [tuple()]  # pas besoin de tirer dans pool
+    else:
+        candidats = itertools.combinations(pool, need)
+
+    # parcourir combinaisons
+    for combo in candidats:
+        team = forced + list(combo)
+        off, real = official_total(team)
+        if off >= SEUIL:
+            ecart = off - SEUIL
+            if (meilleure is None) or (ecart < meilleur_ecart):
+                meilleure = {"team": team, "off": off, "real": real}
+                meilleur_ecart = ecart
+        else:
+            # garder la meilleure en dessous (max officiel)
+            if (meilleur_any is None) or (off > meilleur_any["off"]):
+                meilleur_any = {"team": team, "off": off, "real": real}
+
+    # si on a une combinaison valide (>= SEUIL)
+    if meilleure:
+        res_team = sorted(meilleure["team"], key=lambda x: float(x["index"]))
+        # on renvoie la team SANS indiquer qui est choix du capitaine (confidentialité)
+        return jsonify({
+            "success": True,
+            "team": [{"nom": p["nom"], "index": round(float(p["index"]), 1)} for p in res_team],
+            "index_officiel": meilleure["off"],
+            "index_reel": round(meilleure["real"], 1),
+            "message": "Équipe calculée — objectif 84.4 atteint."
+        })
+
+    # sinon, on ne peut pas atteindre SEUIL avec les choix forcés
+    # on renvoie la meilleure possible et un message d'alerte invitant la révision des choix du capitaine
+    if meilleur_any:
+        res_team = sorted(meilleur_any["team"], key=lambda x: float(x["index"]))
+        return jsonify({
+            "success": False,
+            "team": [{"nom": p["nom"], "index": round(float(p["index"]), 1)} for p in res_team],
+            "index_officiel": meilleur_any["off"],
+            "index_reel": round(meilleur_any["real"], 1),
+            "message": "❌ En dessous de 84.4 : les choix du capitaine doivent être revus pour atteindre 84.4"
+        }), 400
+
+    return jsonify({"error": "Aucune combinaison trouvée"}), 400
+
 
 @app.route("/api/status")
 def status():
@@ -119,3 +174,4 @@ def status():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
+
