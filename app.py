@@ -58,12 +58,21 @@ def get_joueurs():
 
 @app.route("/api/joueurs", methods=["POST"])
 def add_joueur():
+    data = request.get_json()
+
+    # ✅ Si le front envoie une liste, on prend le premier élément
+    if isinstance(data, list) and len(data) > 0:
+        new_joueur = data[0]
+    else:
+        new_joueur = data
+
     joueurs = load_joueurs()
-    new_joueur = request.json
     joueurs.append(new_joueur)
     save_joueurs(joueurs)
+
     push_to_github(f"Ajout de {new_joueur.get('nom', 'un joueur')}")
-    return jsonify({"success": True})
+    return jsonify(joueurs)
+
 
 @app.route("/api/joueurs/<nom>", methods=["PUT"])
 def update_joueur(nom):
@@ -138,3 +147,4 @@ def status():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
+
