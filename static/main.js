@@ -1,7 +1,6 @@
 // main.js — client side logic
-const API_CALC = "/api/calcul";
+const API_CALC = "/api/meilleure_equipe";
 const API_JOUEURS = "/api/joueurs";
-const API_SAVE = "/api/joueurs";
 const API_RESET = "/api/reset_dispos";
 
 let joueurs = [];
@@ -33,18 +32,17 @@ async function loadPlayers() {
 }
 
 function renderTable() {
-  // sort according to sortState
-  joueurs.sort((a,b)=> {
+  joueurs.sort((a, b) => {
     const col = sortState.col;
     if (col === "nom") {
-      return sortState.dir * (a.nom.localeCompare(b.nom, 'fr', {sensitivity:'base'}));
+      return sortState.dir * (a.nom.localeCompare(b.nom, "fr", { sensitivity: "base" }));
     } else {
       return sortState.dir * (parseFloat(a.index) - parseFloat(b.index));
     }
   });
 
   tbody.innerHTML = "";
-  joueurs.forEach((j,i)=>{
+  joueurs.forEach((j, i) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td contenteditable="true" class="cell-nom">${escapeHtml(j.nom)}</td>
@@ -53,18 +51,24 @@ function renderTable() {
       <td><input type="checkbox" class="cell-cap" ${j.choix_capitaine ? "checked" : ""}></td>
       <td><button class="btn-del">🗑️</button></td>
     `;
-    // events
-    tr.querySelector(".cell-nom").addEventListener("input", (e)=>{ joueurs[i].nom = e.target.innerText.trim(); });
-    tr.querySelector(".cell-index").addEventListener("input", (e)=>{
+
+    tr.querySelector(".cell-nom").addEventListener("input", e => {
+      joueurs[i].nom = e.target.innerText.trim();
+    });
+    tr.querySelector(".cell-index").addEventListener("input", e => {
       const v = e.target.innerText.replace(",", ".").trim();
       joueurs[i].index = isNaN(parseFloat(v)) ? 0 : parseFloat(v);
       e.target.innerText = Number(joueurs[i].index).toFixed(1);
     });
-    tr.querySelector(".cell-dispo").addEventListener("change", (e)=>{ joueurs[i].disponible = e.target.checked; });
-    tr.querySelector(".cell-cap").addEventListener("change", (e)=>{ joueurs[i].choix_capitaine = e.target.checked; });
-    tr.querySelector(".btn-del").addEventListener("click", ()=>{
+    tr.querySelector(".cell-dispo").addEventListener("change", e => {
+      joueurs[i].disponible = e.target.checked;
+    });
+    tr.querySelector(".cell-cap").addEventListener("change", e => {
+      joueurs[i].choix_capitaine = e.target.checked;
+    });
+    tr.querySelector(".btn-del").addEventListener("click", () => {
       if (confirm("Supprimer ce joueur ?")) {
-        joueurs.splice(i,1);
+        joueurs.splice(i, 1);
         renderTable();
       }
     });
@@ -72,94 +76,116 @@ function renderTable() {
   });
 }
 
-// helpers
-function escapeHtml(str){ return String(str).replace(/[&<>"'`=\/]/g, function(s){ return ({
-  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','/':'&#x2F;','`':'&#x60;','=':'&#x3D;'
-})[s]; }); }
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"'`=\/]/g, function (s) {
+    return ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;',
+      "'": '&#39;', '/': '&#x2F;', '`': '&#x60;', '=': '&#x3D;'
+    })[s];
+  });
+}
 
-// add player
-btnAdd.addEventListener("click", ()=>{
+// ➕ Ajouter un joueur (POST)
+btnAdd.addEventListener("click", async () => {
   const nom = prompt("Nom du joueur (Prénom NOM) ?");
   if (!nom) return;
   const idxRaw = prompt("Index du joueur (ex: 12.7) ?");
   const idx = parseFloat(String(idxRaw).replace(",", "."));
   if (isNaN(idx)) return alert("Index invalide");
-  joueurs.push({ nom: nom.trim(), index: idx, disponible: false, choix_capitaine: false });
-  renderTable();
-});
 
-// save
-btnSave.addEventListener("click", async ()=>{
-  showStatus("Sauvegarde en cours...");
+  const newJoueur = { nom: nom.trim(), index: idx, disponible: false, choix_capitaine: false };
+
+  showStatus("Ajout du joueur...");
   try {
-    const resp = await fetch(API_SAVE, { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(joueurs)});
-    const data = await resp.json();
-    showStatus(data.message || "Sauvegardé");
-    setTimeout(clearStatus, 1500);
+    const resp = await fetch(API_JOUEURS, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newJoueur)
+    });
+    if (!resp.ok) {
+      const err = await resp.json();
+      alert("Erreur ajout: " + (err.error || "Inconnue"));
+    } else {
+      joueurs = await resp.json();
+      renderTable();
+      showStatus("✅ Joueur ajouté !");
+    }
   } catch (e) {
-    alert("Erreur sauvegarde: " + e);
-    clearStatus();
+    alert("Erreur ajout joueur: " + e);
+  } finally {
+    setTimeout(clearStatus, 1500);
   }
 });
 
-// reset dispo
-btnReset.addEventListener("click", async ()=>{
+// 💾 Sauvegarde complète (PUT)
+btnSave.addEventListener("click", async () => {
+  showStatus("Sauvegarde complète...");
+  try {
+    const resp = await fetch(API_JOUEURS, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(joueurs)
+    });
+    if (!resp.ok) throw new Error(await resp.text());
+    const data = await resp.json();
+    showStatus("✅ Sauvegarde réussie !");
+  } catch (e) {
+    alert("Erreur sauvegarde: " + e);
+  } finally {
+    setTimeout(clearStatus, 1500);
+  }
+});
+
+// ♻️ Reset des dispos
+btnReset.addEventListener("click", async () => {
   if (!confirm("Remettre toutes les disponibilités à NON ?")) return;
   showStatus("Remise à zéro...");
   await fetch(API_RESET, { method: "POST" });
   await loadPlayers();
-  showStatus("Disponibilités remises à zéro");
+  showStatus("✅ Disponibilités remises à zéro");
   setTimeout(clearStatus, 1200);
 });
 
-// calculate
-btnCalc.addEventListener("click", async ()=>{
-  // send current (so client edits not yet saved to file are considered)
+// 🧮 Calcul équipe
+btnCalc.addEventListener("click", async () => {
   showStatus("⏳ Calcul en cours…");
   btnCalc.disabled = true;
   resultDiv.style.display = "none";
   try {
-    const resp = await fetch(API_CALC, { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ joueurs })});
-    if (!resp.ok) {
-      const err = await resp.json().catch(()=>({error:"Erreur serveur"}));
-      resultDiv.innerHTML = `<p class="err">${err.error || err.message || "Erreur lors du calcul."}</p>`;
-      resultDiv.style.display = "block";
-      resultDiv.scrollIntoView({behavior:"smooth"});
-      showStatus("");
-      btnCalc.disabled = false;
-      return;
-    }
+    const resp = await fetch(API_CALC, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ joueurs })
+    });
     const data = await resp.json();
-    // build display
-    let html = `<h2>🏌️ Sélection pour le prochain match (index officiel : ${data.index_officiel})</h2>`;
-    html += `<p>Index réel : ${data.index_reel}</p>`;
-    html += `<ul>`;
-    data.team.forEach(p=>{
-      html += `<li>${escapeHtml(p.nom)}${p.plafonne ? ' <span class="capped">✳️</span>':''} — ${p.index}</li>`;
+    if (!resp.ok) throw new Error(data.error || "Erreur serveur");
+
+    let html = `<h2>🏌️ Sélection optimale (${data.total_index_plafonne})</h2>`;
+    html += `<p>Index réel total : ${data.total_index_reel}</p><ul>`;
+    data.equipe.forEach(p => {
+      html += `<li>${escapeHtml(p.nom)} — ${p.index}</li>`;
     });
     html += `</ul>`;
-    html += `<p><strong>${data.success ? '✅ Objectif atteint' : '❌ Objectif non atteint — meilleure trouvée'}</strong></p>`;
     resultDiv.innerHTML = html;
     resultDiv.style.display = "block";
-    resultDiv.scrollIntoView({behavior:"smooth"});
-    showStatus("");
-    btnCalc.disabled = false;
   } catch (e) {
-    alert("Erreur calcul: " + e);
+    resultDiv.innerHTML = `<p class="err">❌ ${e.message}</p>`;
+    resultDiv.style.display = "block";
+  } finally {
     showStatus("");
     btnCalc.disabled = false;
   }
 });
 
-// copy result
-btnCopy.addEventListener("click", ()=>{
+// 📋 Copie du résultat
+btnCopy.addEventListener("click", () => {
   if (resultDiv.style.display === "none" || !resultDiv.innerText.trim()) return alert("Aucun résultat à copier");
-  navigator.clipboard.writeText(resultDiv.innerText).then(()=> alert("Résultat copié dans le presse-papiers"));
+  navigator.clipboard.writeText(resultDiv.innerText).then(() => alert("Résultat copié dans le presse-papiers"));
 });
 
-// sorting by header
-document.querySelectorAll("th[data-col]").forEach(th=>{
-  th.addEventListener("click", ()=>{
+// 🔽 Tri
+document.querySelectorAll("th[data-col]").forEach(th => {
+  th.addEventListener("click", () => {
     const col = th.dataset.col;
     if (sortState.col === col) sortState.dir *= -1;
     else { sortState.col = col; sortState.dir = 1; }
@@ -167,6 +193,5 @@ document.querySelectorAll("th[data-col]").forEach(th=>{
   });
 });
 
-// initial load
+// Initial load
 loadPlayers();
-
