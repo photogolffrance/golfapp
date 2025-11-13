@@ -60,18 +60,21 @@ def get_joueurs():
 def add_joueur():
     data = request.get_json()
 
-    # ✅ Si le front envoie une liste, on prend le premier élément
-    if isinstance(data, list) and len(data) > 0:
-        new_joueur = data[0]
+    # ✅ Accepte un joueur ou une liste de joueurs
+    if isinstance(data, list):
+        joueurs_a_ajouter = data
     else:
-        new_joueur = data
+        joueurs_a_ajouter = [data]
 
     joueurs = load_joueurs()
-    joueurs.append(new_joueur)
+    joueurs.extend(joueurs_a_ajouter)
     save_joueurs(joueurs)
 
-    push_to_github(f"Ajout de {new_joueur.get('nom', 'un joueur')}")
+    noms = [j.get("nom", "un joueur") for j in joueurs_a_ajouter]
+    push_to_github(f"Ajout de {', '.join(noms)}")
+
     return jsonify(joueurs)
+
 
 
 @app.route("/api/joueurs/<nom>", methods=["PUT"])
@@ -147,4 +150,5 @@ def status():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
+
 
