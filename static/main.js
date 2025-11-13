@@ -127,7 +127,7 @@ btnSave.addEventListener("click", async () => {
       body: JSON.stringify(joueurs)
     });
     if (!resp.ok) throw new Error(await resp.text());
-    const data = await resp.json();
+    await resp.json();
     showStatus("✅ Sauvegarde réussie !");
   } catch (e) {
     alert("Erreur sauvegarde: " + e);
@@ -151,6 +151,8 @@ btnCalc.addEventListener("click", async () => {
   showStatus("⏳ Calcul en cours…");
   btnCalc.disabled = true;
   resultDiv.style.display = "none";
+  resultDiv.innerHTML = "";
+
   try {
     const resp = await fetch(API_CALC, {
       method: "POST",
@@ -158,16 +160,24 @@ btnCalc.addEventListener("click", async () => {
       body: JSON.stringify({ joueurs })
     });
     const data = await resp.json();
-    if (!resp.ok) throw new Error(data.error || "Erreur serveur");
 
-    let html = `<h2>🏌️ Sélection optimale (${data.total_index_plafonne})</h2>`;
-    html += `<p>Index réel total : ${data.total_index_reel}</p><ul>`;
-    data.equipe.forEach(p => {
+    if (!resp.ok) {
+      // Si erreur serveur, on affiche le message clair
+      resultDiv.innerHTML = `<p class="err">❌ ${data.message || data.error || "Erreur serveur"}</p>`;
+      resultDiv.style.display = "block";
+      return;
+    }
+
+    // ✅ Cas normal : on affiche l’équipe
+    let html = `<h2>🏌️ Sélection optimale (index officiel : ${data.index_officiel})</h2>`;
+    html += `<p>Index réel : ${data.index_reel}</p><ul>`;
+    data.team.forEach(p => {
       html += `<li>${escapeHtml(p.nom)} — ${p.index}</li>`;
     });
-    html += `</ul>`;
+    html += `</ul><p>${data.message}</p>`;
     resultDiv.innerHTML = html;
     resultDiv.style.display = "block";
+
   } catch (e) {
     resultDiv.innerHTML = `<p class="err">❌ ${e.message}</p>`;
     resultDiv.style.display = "block";
@@ -179,8 +189,10 @@ btnCalc.addEventListener("click", async () => {
 
 // 📋 Copie du résultat
 btnCopy.addEventListener("click", () => {
-  if (resultDiv.style.display === "none" || !resultDiv.innerText.trim()) return alert("Aucun résultat à copier");
-  navigator.clipboard.writeText(resultDiv.innerText).then(() => alert("Résultat copié dans le presse-papiers"));
+  if (resultDiv.style.display === "none" || !resultDiv.innerText.trim()) 
+    return alert("Aucun résultat à copier");
+  navigator.clipboard.writeText(resultDiv.innerText)
+    .then(() => alert("Résultat copié dans le presse-papiers"));
 });
 
 // 🔽 Tri
