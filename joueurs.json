@@ -472,6 +472,13 @@
     "index": 20.0,
     "disponible": false,
     "choix_capitaine": false
+  },
+  {
+    "nom": "Maxime AUBRY",
+    "index": 20.1,
+    "disponible": false,
+    "choix_capitaine": false
   }
 ]
+
 
