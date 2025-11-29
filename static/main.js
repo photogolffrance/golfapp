@@ -162,7 +162,6 @@ btnCalc.addEventListener("click", async () => {
     const data = await resp.json();
 
     if (!resp.ok) {
-      // Si erreur serveur, on affiche le message clair
       resultDiv.innerHTML = `<p class="err">❌ ${data.message || data.error || "Erreur serveur"}</p>`;
       resultDiv.style.display = "block";
       return;
@@ -175,6 +174,11 @@ btnCalc.addEventListener("click", async () => {
       html += `<li>${escapeHtml(p.nom)} — ${p.index}</li>`;
     });
     html += `</ul><p>${data.message}</p>`;
+
+    // 👉 AJOUT : nombre total de joueurs présents
+    const nbPresents = joueurs.filter(j => j.disponible).length;
+    html += `<p><strong>${nbPresents} joueur${nbPresents > 1 ? "s" : ""} ayant répondu présent</strong></p>`;
+
     resultDiv.innerHTML = html;
     resultDiv.style.display = "block";
 
