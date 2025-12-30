@@ -59,6 +59,12 @@
     "disponible": false,
     "choix_capitaine": false
   },
+   {
+    "nom": "Pierre BRUNAUD index à confirmer",
+    "index": 7.0,
+    "disponible": false,
+    "choix_capitaine": false
+  },
   {
     "nom": "Emmanuel JANODET",
     "index": 7.9,
@@ -122,6 +128,12 @@
   {
     "nom": "Daniel URBANIAK",
     "index": 10.3,
+    "disponible": false,
+    "choix_capitaine": false
+  },
+   {
+    "nom": "Nicolas MAURICE",
+    "index": 10.6,
     "disponible": false,
     "choix_capitaine": false
   },
@@ -480,6 +492,7 @@
     "choix_capitaine": false
   }
 ]
+
 
 
 
