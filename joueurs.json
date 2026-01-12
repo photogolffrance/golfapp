@@ -60,8 +60,8 @@
     "choix_capitaine": false
   },
    {
-    "nom": "Pierre BRUNAUD index à confirmer",
-    "index": 7.0,
+    "nom": "Pierre BRUNAUD",
+    "index": 7.5,
     "disponible": false,
     "choix_capitaine": false
   },
@@ -492,6 +492,7 @@
     "choix_capitaine": false
   }
 ]
+
 
 
 
