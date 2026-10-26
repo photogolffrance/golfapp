@@ -60,6 +60,12 @@
     "choix_capitaine": false
   },
   {
+    "nom": "Adrien BOUTRELLE",
+    "index": 14.9,
+    "disponible": false,
+    "choix_capitaine": false
+  },
+  {
     "nom": "Pierre BRUNAUD",
     "index": 5.3,
     "disponible": false,
