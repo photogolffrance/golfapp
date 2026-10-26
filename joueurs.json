@@ -1,4 +1,6 @@
-    "nom": "Emmanuel JANODET",
+[
+  {
+        "nom": "Emmanuel JANODET",
     "index": 7.3,
     "disponible": false,
     "choix_capitaine": false
@@ -189,4 +191,10 @@
     "disponible": false,
     "choix_capitaine": false
   },
-  {
+  
+]
+
+
+
+
+
