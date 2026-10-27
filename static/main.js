@@ -175,11 +175,7 @@ btnCalc.addEventListener("click", async () => {
     });
     html += `</ul><p>${data.message}</p>`;
 
-    // 👉 AJOUT : nombre total de joueurs présents
-    const nbPresents = joueurs.filter(j => j.disponible).length;
-    html += `<p><strong>${nbPresents} joueur${nbPresents > 1 ? "s" : ""} ayant répondu présent</strong></p>`;
-
-    resultDiv.innerHTML = html;
+        resultDiv.innerHTML = html;
     resultDiv.style.display = "block";
 
   } catch (e) {
